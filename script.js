@@ -1,208 +1,232 @@
 document.addEventListener('DOMContentLoaded', async function () {
-    const files = ['image.md', 'cats.md', 'end.md'];
-    const folderPath = 'texts';
-    const contentDiv = document.getElementById('content');
-    const menu = document.getElementById('menu');
-  
-    // загрузка markdown и рендер
-    async function loadMarkdownContent() {
-      for (const file of files) {
-        try {
-          const res = await fetch(`${folderPath}/${file}`);
-          if (!res.ok) throw new Error(`Failed to load ${file}: ${res.status}`);
-          const text = await res.text();
-          const html = marked.parse(text);
-          const block = document.createElement('div');
-          block.className = 'markdown-block';
-          block.id = file;             // важно, чтобы id совпадал с именем файла
-          block.innerHTML = html;
-          contentDiv.appendChild(block);
-        } catch (e) {
-          console.error(e);
-          const errorBlock = document.createElement('div');
-          errorBlock.className = 'markdown-block';
-          errorBlock.textContent = `Error loading ${file}: ${e.message}`;
-          contentDiv.appendChild(errorBlock);
-        }
+  const files = [
+    'auto_mod.md',
+    'cats.md', 
+    'chatbot.md', 
+    'clicker.md', 
+    'auto_roles.md',
+    'moderation_control.md',
+    'notify_of_members.md',
+    'sticky_roles.md',
+    'verify.md',
+    'youtube.md',
+    'iq.md',
+    'messages.md',
+    'quote.md',
+    'roulette.md',
+    'image.md', 
+  ];
+  const folderPath = 'texts';
+  const contentDiv = document.getElementById('content');
+  const menu = document.getElementById('menu');
+
+  // загрузка markdown и рендер
+  async function loadMarkdownContent() {
+    for (const file of files) {
+      try {
+        const res = await fetch(`${folderPath}/${file}`);
+        if (!res.ok) throw new Error(`Failed to load ${file}: ${res.status}`);
+        const text = await res.text();
+        const html = marked.parse(text);
+        const block = document.createElement('div');
+        block.className = 'markdown-block';
+        block.id = file;             // важно, чтобы id совпадал с именем файла
+        block.innerHTML = html;
+        contentDiv.appendChild(block);
+      } catch (e) {
+        console.error(e);
+        const errorBlock = document.createElement('div');
+        errorBlock.className = 'markdown-block';
+        errorBlock.textContent = `Error loading ${file}: ${e.message}`;
+        contentDiv.appendChild(errorBlock);
       }
     }
-  
-    // создание пунктов меню и навешивание клика
-    function populateMenu() {
-      files.forEach(file => {
+  }
+
+  // создание пунктов меню и навешивание клика
+  function populateMenu() {
+    files.forEach(file => {
         const name = file.replace('.md', '');
         const p = document.createElement('p');
         p.textContent = name;
         p.dataset.target = file;
         p.classList.add('menu-item');
         p.addEventListener('click', () => {
-          document.getElementById(file)
-                  .scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const block = document.getElementById(file);
+        const rect = block.getBoundingClientRect();
+        const blockMid = rect.top + rect.height / 2; // Середина блока относительно верха документа
+        const windowMid = window.innerHeight / 2; // Середина окна
+        const scrollOffset = blockMid - windowMid + window.scrollY; // Смещение для центрирования
+
+        window.scrollTo({
+            top: scrollOffset,
+            behavior: 'smooth'
+        });
         });
         menu.appendChild(p);
-      });
-    }
-  
-    // подсветка текущего пункта меню
-    function setActiveItem(currentFile) {
-      document.querySelectorAll('#menu .menu-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.target === currentFile);
-      });
-    }
-  
-    // отслеживаем скролл и определяем элемент, занимающий середину экрана
-    function watchScroll() {
-      const centerY = () => window.innerHeight / 2;
-      const sections = files.map(f => document.getElementById(f));
-  
-      window.addEventListener('scroll', () => {
-        const mid = centerY();
-        let current = sections[0].id;
-  
-        sections.forEach(sec => {
-          const rect = sec.getBoundingClientRect();
-          if (rect.top <= mid && rect.bottom >= mid) {
-            current = sec.id;
-          }
-        });
-  
-        setActiveItem(current);
-      });
-  
-      // сразу установить начальный активный пункт
-      window.dispatchEvent(new Event('scroll'));
-    }
-  
-    // обработчик поиска
-    function searchHeandler() {
-      const button = document.querySelector('#search-button');
-      const inputContainer = document.querySelector('#background');
-      const inputSector = document.querySelector('#search-input-button');
-      const searchInput = document.getElementById('search-input-button');
-      const form = searchInput.closest('form');
-  
-      function findText(text) {
-        // Скрыть контейнеры, если они видны
-        if (inputContainer.classList.contains('show')) inputContainer.classList.remove('show');
-        if (inputSector.classList.contains('show')) inputSector.classList.remove('show');
-        if (!text.trim()) return;
-    
-        // Удалить старую подсветку
-        document.querySelectorAll('.highlight').forEach(span => {
-          const parent = span.parentNode;
-          parent.replaceChild(document.createTextNode(span.textContent), span);
-          parent.normalize(); // Нормализуем узлы, чтобы объединить соседние текстовые узлы
-        });
-    
-        const searchText = text.toLowerCase().trim();
-        const elements = document.querySelectorAll('body *'); // Расширяем селектор для поиска во всех элементах
-        let foundElement = null;
-    
-        for (const el of elements) {
-          // Получаем весь текст элемента, включая текст вложенных элементов
-          const elementText = el.textContent.toLowerCase();
-          if (elementText.includes(searchText)) {
-            foundElement = el;
-            break;
-          }
+    });
+}
+
+  // подсветка текущего пункта меню
+  function setActiveItem(currentFile) {
+    document.querySelectorAll('#menu .menu-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.target === currentFile);
+    });
+  }
+
+  // отслеживаем скролл и определяем элемент, занимающий середину экрана
+  function watchScroll() {
+    const centerY = () => window.innerHeight / 2;
+    const sections = files.map(f => document.getElementById(f));
+
+    window.addEventListener('scroll', () => {
+      const mid = centerY();
+      let current = sections[0].id;
+
+      sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= mid && rect.bottom >= mid) {
+          current = sec.id;
         }
-    
-        if (foundElement) {
-          // Рекурсивно обходим текстовые узлы, чтобы найти точное совпадение
-          const walker = document.createTreeWalker(
-            foundElement,
-            NodeFilter.SHOW_TEXT,
-            { acceptNode: node => NodeFilter.FILTER_ACCEPT }
-          );
-    
-          let node;
-          while ((node = walker.nextNode())) {
-            const nodeText = node.textContent.toLowerCase();
-            const start = nodeText.indexOf(searchText);
-            if (start !== -1) {
-              const range = document.createRange();
-              range.setStart(node, start);
-              range.setEnd(node, start + searchText.length);
-    
-              const highlightSpan = document.createElement('span');
-              highlightSpan.className = 'highlight';
-              highlightSpan.style.backgroundColor = 'yellow';
-              range.surroundContents(highlightSpan);
-              highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-              // Удаляем подсветку через 2 секунды
-              setTimeout(() => {
-                const parent = highlightSpan.parentNode;
-                parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
-                parent.normalize();
-              }, 2000);
-    
-              break; // Нашли и подсветили, выходим
-            }
-          }
+      });
+
+      setActiveItem(current);
+    });
+
+    // сразу установить начальный активный пункт
+    window.dispatchEvent(new Event('scroll'));
+  }
+
+  // обработчик поиска
+  function searchHeandler() {
+    const button = document.querySelector('#search-button');
+    const inputContainer = document.querySelector('#background');
+    const inputSector = document.querySelector('#search-input-button');
+    const searchInput = document.getElementById('search-input-button');
+    const form = searchInput.closest('form');
+
+    function findText(text) {
+      // Скрыть контейнеры, если они видны
+      if (inputContainer.classList.contains('show')) inputContainer.classList.remove('show');
+      if (inputSector.classList.contains('show')) inputSector.classList.remove('show');
+      if (!text.trim()) return;
+  
+      // Удалить старую подсветку
+      document.querySelectorAll('.highlight').forEach(span => {
+        const parent = span.parentNode;
+        parent.replaceChild(document.createTextNode(span.textContent), span);
+        parent.normalize(); // Нормализуем узлы, чтобы объединить соседние текстовые узлы
+      });
+  
+      const searchText = text.toLowerCase().trim();
+      const elements = document.querySelectorAll('body *'); // Расширяем селектор для поиска во всех элементах
+      let foundElement = null;
+  
+      for (const el of elements) {
+        // Получаем весь текст элемента, включая текст вложенных элементов
+        const elementText = el.textContent.toLowerCase();
+        if (elementText.includes(searchText)) {
+          foundElement = el;
+          break;
         }
       }
   
-      searchInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          findText(searchInput.value);
-        }
-      });
-      if (form) {
-        form.addEventListener('submit', e => {
-          e.preventDefault();
-          findText(searchInput.value);
-        });
-      }
+      if (foundElement) {
+        // Рекурсивно обходим текстовые узлы, чтобы найти точное совпадение
+        const walker = document.createTreeWalker(
+          foundElement,
+          NodeFilter.SHOW_TEXT,
+          { acceptNode: node => NodeFilter.FILTER_ACCEPT }
+        );
   
-      button.addEventListener('click', () => {
-        inputContainer.classList.add('show');
-        inputSector.classList.add('show');
-      });
-      inputContainer.addEventListener('click', e => {
-        if (!inputSector.contains(e.target)) {
-          inputContainer.classList.remove('show');
-          inputSector.classList.remove('show');
+        let node;
+        while ((node = walker.nextNode())) {
+          const nodeText = node.textContent.toLowerCase();
+          const start = nodeText.indexOf(searchText);
+          if (start !== -1) {
+            const range = document.createRange();
+            range.setStart(node, start);
+            range.setEnd(node, start + searchText.length);
+  
+            const highlightSpan = document.createElement('span');
+            highlightSpan.className = 'highlight';
+            highlightSpan.style.backgroundColor = 'yellow';
+            range.surroundContents(highlightSpan);
+            highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  
+            // Удаляем подсветку через 2 секунды
+            setTimeout(() => {
+              const parent = highlightSpan.parentNode;
+              parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
+              parent.normalize();
+            }, 2000);
+  
+            break; // Нашли и подсветили, выходим
+          }
         }
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          inputContainer.classList.remove('show');
-          inputSector.classList.remove('show');
-        }
+      }
+    }
+
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        findText(searchInput.value);
+      }
+    });
+    if (form) {
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        findText(searchInput.value);
       });
     }
 
-    // Обработчик выпадающего меню
-    function menuHeandler() {
-      const menu = document.querySelector('#menu');
-      const button = document.querySelector('#menu-button');
-      const backGround = document.querySelector('#background-2');
-  
-      button.addEventListener('click', () => {
-        menu.classList.add('show');
-        backGround.classList.add('show');
-      });
-      document.addEventListener('click', e => {
-        if (!menu.contains(e.target) && !button.contains(e.target)) {
-          menu.classList.remove('show');
-          backGround.classList.remove('show');
-        }
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-          menu.classList.remove('show');
-          backGround.classList.remove('show');
-        }
-      });
-    }
-  
-    // инициализация
-    await loadMarkdownContent();
-    populateMenu();
-    watchScroll();
-    searchHeandler();
-    menuHeandler();
-  });
+    button.addEventListener('click', () => {
+      inputContainer.classList.add('show');
+      inputSector.classList.add('show');
+    });
+    inputContainer.addEventListener('click', e => {
+      if (!inputSector.contains(e.target)) {
+        inputContainer.classList.remove('show');
+        inputSector.classList.remove('show');
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        inputContainer.classList.remove('show');
+        inputSector.classList.remove('show');
+      }
+    });
+  }
+
+  // Обработчик выпадающего меню
+  function menuHeandler() {
+    const menu = document.querySelector('#menu');
+    const button = document.querySelector('#menu-button');
+    const backGround = document.querySelector('#background-2');
+
+    button.addEventListener('click', () => {
+      menu.classList.add('show');
+      backGround.classList.add('show');
+    });
+    document.addEventListener('click', e => {
+      if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.remove('show');
+        backGround.classList.remove('show');
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        menu.classList.remove('show');
+        backGround.classList.remove('show');
+      }
+    });
+  }
+
+  // инициализация
+  await loadMarkdownContent();
+  populateMenu();
+  watchScroll();
+  searchHeandler();
+  menuHeandler();
+});
   

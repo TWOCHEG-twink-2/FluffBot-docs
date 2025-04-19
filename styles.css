@@ -15,6 +15,7 @@ body {
 }
 
 #menu {
+    padding-top: 10px;
     backdrop-filter: blur(30px);
     background-color: rgba(255, 255, 255, 0.5);
     border-right: 1px solid rgba(0, 0, 0, 0.1);
@@ -24,7 +25,7 @@ body {
     position: fixed;
     height: 100%;
     padding-left: 20px;
-    padding-right: 60px;
+    padding-right: 20px;
 
     transform: translateX(-300px);
     transition: all 0.5s ease-in-out;
@@ -36,17 +37,18 @@ body {
     margin: 0.5rem 0;
     padding-top: 5px;
     padding-bottom: 5px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 10px;
+    padding-right: 40px;
     cursor: pointer;
     transition: background-color 0.2s;
     border-radius: 10px;
+    transition: all 0.2s ease-in-out;
 }
 #menu p:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 #menu p.active {
-    color: #005fcc;
+    background-color: rgba(0, 0, 255, 0.08);
     font-weight: bold;
 }
 
