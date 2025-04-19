@@ -82,48 +82,64 @@ document.addEventListener('DOMContentLoaded', async function () {
       const form = searchInput.closest('form');
   
       function findText(text) {
+        // Скрыть контейнеры, если они видны
         if (inputContainer.classList.contains('show')) inputContainer.classList.remove('show');
-        if (inputSector.classList.contains('show'))   inputSector.classList.remove('show');
+        if (inputSector.classList.contains('show')) inputSector.classList.remove('show');
         if (!text.trim()) return;
-  
-        // удалить старую подсветку
+    
+        // Удалить старую подсветку
         document.querySelectorAll('.highlight').forEach(span => {
           const parent = span.parentNode;
           parent.replaceChild(document.createTextNode(span.textContent), span);
+          parent.normalize(); // Нормализуем узлы, чтобы объединить соседние текстовые узлы
         });
-  
+    
         const searchText = text.toLowerCase().trim();
-        const elements = document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, li, td');
-        let foundElement = null, textNode = null;
-  
+        const elements = document.querySelectorAll('body *'); // Расширяем селектор для поиска во всех элементах
+        let foundElement = null;
+    
         for (const el of elements) {
-          for (const node of el.childNodes) {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.toLowerCase().includes(searchText)) {
-              foundElement = el;
-              textNode = node;
-              break;
+          // Получаем весь текст элемента, включая текст вложенных элементов
+          const elementText = el.textContent.toLowerCase();
+          if (elementText.includes(searchText)) {
+            foundElement = el;
+            break;
+          }
+        }
+    
+        if (foundElement) {
+          // Рекурсивно обходим текстовые узлы, чтобы найти точное совпадение
+          const walker = document.createTreeWalker(
+            foundElement,
+            NodeFilter.SHOW_TEXT,
+            { acceptNode: node => NodeFilter.FILTER_ACCEPT }
+          );
+    
+          let node;
+          while ((node = walker.nextNode())) {
+            const nodeText = node.textContent.toLowerCase();
+            const start = nodeText.indexOf(searchText);
+            if (start !== -1) {
+              const range = document.createRange();
+              range.setStart(node, start);
+              range.setEnd(node, start + searchText.length);
+    
+              const highlightSpan = document.createElement('span');
+              highlightSpan.className = 'highlight';
+              highlightSpan.style.backgroundColor = 'yellow';
+              range.surroundContents(highlightSpan);
+              highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+              // Удаляем подсветку через 2 секунды
+              setTimeout(() => {
+                const parent = highlightSpan.parentNode;
+                parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
+                parent.normalize();
+              }, 2000);
+    
+              break; // Нашли и подсветили, выходим
             }
           }
-          if (foundElement) break;
-        }
-  
-        if (foundElement && textNode) {
-          const range = document.createRange();
-          const txt = textNode.textContent;
-          const start = txt.toLowerCase().indexOf(searchText);
-          range.setStart(textNode, start);
-          range.setEnd(textNode, start + searchText.length);
-  
-          const highlightSpan = document.createElement('span');
-          highlightSpan.className = 'highlight';
-          highlightSpan.style.backgroundColor = 'yellow';
-          range.surroundContents(highlightSpan);
-          highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  
-          setTimeout(() => {
-            const parent = highlightSpan.parentNode;
-            parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
-          }, 2000);
         }
       }
   
