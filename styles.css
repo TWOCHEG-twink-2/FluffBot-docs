@@ -26,7 +26,7 @@ body {
     padding-left: 20px;
     padding-right: 60px;
 
-    transform: translateX(-200px);
+    transform: translateX(-300px);
     transition: all 0.5s ease-in-out;
 }
 #menu.show {
