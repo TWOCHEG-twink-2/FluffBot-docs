@@ -26,7 +26,7 @@
 
 - отключение от канала при выключении звука
 
-### image_check
+### image check
 
 проверка изображений на безопастность на базе [openai/clip-vit-large-patch14](https://huggingface.co/openai/clip-vit-large-patch14)
 

@@ -6,6 +6,6 @@
 
 `tenor` - использовать вывод медиа с [tenor](https://tenor.com/ru/) API
 
-`cataas` - использовать вывод медиа с [tenor](https://tenor.com/ru/) API [cataas](https://cataas.com/) API
+`cataas` - использовать вывод медиа с [cataas](https://cataas.com/) API
 
 если нечего не указывать будет 2 варианта рандомно
