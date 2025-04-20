@@ -42,6 +42,20 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
     }
   }
+  function setupIntersectionObserver() {
+    const markdownBlocks = document.querySelectorAll('.markdown-block');
+    markdownBlocks.forEach(block => {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    block.classList.add('visible');
+                    observer.unobserve(block);
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(block);
+    });
+  }
 
   // создание пунктов меню и навешивание клика
   function populateMenu() {
@@ -113,59 +127,59 @@ document.addEventListener('DOMContentLoaded', async function () {
   
       // Удалить старую подсветку
       document.querySelectorAll('.highlight').forEach(span => {
-        const parent = span.parentNode;
-        parent.replaceChild(document.createTextNode(span.textContent), span);
-        parent.normalize(); // Нормализуем узлы, чтобы объединить соседние текстовые узлы
+          const parent = span.parentNode;
+          parent.replaceChild(document.createTextNode(span.textContent), span);
+          parent.normalize();
       });
   
       const searchText = text.toLowerCase().trim();
-      const elements = document.querySelectorAll('body *'); // Расширяем селектор для поиска во всех элементах
+      const markdownBlocks = document.querySelectorAll('.markdown-block');
       let foundElement = null;
   
-      for (const el of elements) {
-        // Получаем весь текст элемента, включая текст вложенных элементов
-        const elementText = el.textContent.toLowerCase();
-        if (elementText.includes(searchText)) {
-          foundElement = el;
-          break;
-        }
+      // Поиск первого блока, содержащего текст
+      for (const block of markdownBlocks) {
+          const blockText = block.textContent.toLowerCase();
+          if (blockText.includes(searchText)) {
+              foundElement = block;
+              break;
+          }
       }
   
       if (foundElement) {
-        // Рекурсивно обходим текстовые узлы, чтобы найти точное совпадение
+        // Обход текстовых узлов в найденном блоке
         const walker = document.createTreeWalker(
-          foundElement,
-          NodeFilter.SHOW_TEXT,
-          { acceptNode: node => NodeFilter.FILTER_ACCEPT }
+            foundElement,
+            NodeFilter.SHOW_TEXT,
+            { acceptNode: node => NodeFilter.FILTER_ACCEPT }
         );
-  
+
         let node;
         while ((node = walker.nextNode())) {
-          const nodeText = node.textContent.toLowerCase();
-          const start = nodeText.indexOf(searchText);
-          if (start !== -1) {
-            const range = document.createRange();
-            range.setStart(node, start);
-            range.setEnd(node, start + searchText.length);
-  
-            const highlightSpan = document.createElement('span');
-            highlightSpan.className = 'highlight';
-            highlightSpan.style.backgroundColor = 'yellow';
-            range.surroundContents(highlightSpan);
-            highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  
-            // Удаляем подсветку через 2 секунды
-            setTimeout(() => {
-              const parent = highlightSpan.parentNode;
-              parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
-              parent.normalize();
-            }, 2000);
-  
-            break; // Нашли и подсветили, выходим
+            const nodeText = node.textContent.toLowerCase();
+            const start = nodeText.indexOf(searchText);
+            if (start !== -1) {
+              const range = document.createRange();
+              range.setStart(node, start);
+              range.setEnd(node, start + searchText.length);
+
+              const highlightSpan = document.createElement('span');
+              highlightSpan.className = 'highlight';
+              highlightSpan.style.backgroundColor = 'yellow';
+              range.surroundContents(highlightSpan);
+              highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+              // Удаляем подсветку через 2 секунды
+              setTimeout(() => {
+                  const parent = highlightSpan.parentNode;
+                  parent.replaceChild(document.createTextNode(highlightSpan.textContent), highlightSpan);
+                  parent.normalize();
+              }, 2000);
+
+              break; // Подсветили первое совпадение, выходим
+            }
           }
         }
       }
-    }
 
     searchInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
@@ -197,7 +211,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
     });
   }
-
   // Обработчик выпадающего меню
   function menuHeandler() {
     const menu = document.querySelector('#menu');
@@ -224,6 +237,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // инициализация
   await loadMarkdownContent();
+  setupIntersectionObserver();
   populateMenu();
   watchScroll();
   searchHeandler();

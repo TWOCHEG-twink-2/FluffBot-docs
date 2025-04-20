@@ -15,15 +15,16 @@ body {
 }
 
 #menu {
-    padding-top: 10px;
     backdrop-filter: blur(30px);
     background-color: rgba(255, 255, 255, 0.8);
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 200px rgba(0, 0, 0, 0.2);
-
+    
+    overflow-y: auto;
+    padding-top: 10px;
     z-index: 6;
     position: fixed;
-    height: 100%;
+    height: calc(100% + 100px);
     padding-left: 20px;
     padding-right: 20px;
 
@@ -185,8 +186,15 @@ body {
     color: black;
     margin-top: 30px;
     padding: 10px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.5s ease-in-out;
     box-sizing: border-box;
+
+    transform: translateY(10px);
+    opacity: 0;
+}
+.markdown-block.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .highlight {
