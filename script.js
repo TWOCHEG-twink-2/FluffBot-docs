@@ -23,38 +23,46 @@ document.addEventListener('DOMContentLoaded', async function () {
   // загрузка markdown и рендер
   async function loadMarkdownContent() {
     for (const file of files) {
-      try {
-        const res = await fetch(`${folderPath}/${file}`);
-        if (!res.ok) throw new Error(`Failed to load ${file}: ${res.status}`);
-        const text = await res.text();
-        const html = marked.parse(text);
-        const block = document.createElement('div');
-        block.className = 'markdown-block';
-        block.id = file;             // важно, чтобы id совпадал с именем файла
-        block.innerHTML = html;
-        contentDiv.appendChild(block);
-      } catch (e) {
-        console.error(e);
-        const errorBlock = document.createElement('div');
-        errorBlock.className = 'markdown-block';
-        errorBlock.textContent = `Error loading ${file}: ${e.message}`;
-        contentDiv.appendChild(errorBlock);
-      }
+        try {
+            const res = await fetch(`${folderPath}/${file}`);
+            if (!res.ok) throw new Error(`Failed to load ${file}: ${res.status}`);
+            const text = await res.text();
+            const html = marked.parse(text);
+            const block = document.createElement('div');
+            block.className = 'markdown-block';
+            block.id = file; // ID matches the file name, as required
+            block.innerHTML = html;
+            contentDiv.appendChild(block);
+
+            // Set up IntersectionObserver for this block
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        block.classList.add('visible');
+                        observer.unobserve(block);
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(block);
+        } catch (e) {
+            console.error(e);
+            const errorBlock = document.createElement('div');
+            errorBlock.className = 'markdown-block';
+            errorBlock.textContent = `Error loading ${file}: ${e.message}`;
+            contentDiv.appendChild(errorBlock);
+
+            // Set up IntersectionObserver for the error block
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        errorBlock.classList.add('visible');
+                        observer.unobserve(errorBlock);
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(errorBlock);
+        }
     }
-  }
-  function setupIntersectionObserver() {
-    const markdownBlocks = document.querySelectorAll('.markdown-block');
-    markdownBlocks.forEach(block => {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    block.classList.add('visible');
-                    observer.unobserve(block);
-                }
-            });
-        }, { threshold: 0.1 });
-        observer.observe(block);
-    });
   }
 
   // создание пунктов меню и навешивание клика
@@ -237,7 +245,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // инициализация
   await loadMarkdownContent();
-  setupIntersectionObserver();
   populateMenu();
   watchScroll();
   searchHeandler();
