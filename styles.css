@@ -163,6 +163,7 @@ body {
     opacity: 0;
     padding: 10px;
     max-width: 300px;
+    display: none;
 }
 #search-input-button:hover {
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
@@ -172,6 +173,7 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
 }
 #search-input-button.show {
+    display: block;
     transform: translate(-50%, -50%);
     opacity: 1;
 }
