@@ -19,14 +19,15 @@ body {
     background-color: rgba(255, 255, 255, 0.8);
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 200px rgba(0, 0, 0, 0.2);
-    
-    overflow-y: auto;
+
+    padding-bottom: 100px;
     padding-top: 10px;
     z-index: 6;
     position: fixed;
-    height: calc(100% + 100px);
+    height: 100%;
     padding-left: 20px;
     padding-right: 20px;
+    overflow-y: auto;
 
     transform: translateX(-300px);
     transition: all 0.5s ease-in-out;
