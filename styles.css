@@ -3,17 +3,8 @@ body {
     font-family: 'Patrick Hand', cursive;
     background-color: white;
 }
-#main {
-    background-color: white;
-    padding-left: 30px;
-    padding-right: 30px;
-    width: 80%;
-    margin: 0 auto;
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-}
 
+/* выпадающее меню навигации */
 #menu {
     backdrop-filter: blur(30px);
     background-color: rgba(255, 255, 255, 0.8);
@@ -54,6 +45,7 @@ body {
     font-weight: bold;
 }
 
+/* панель навигации */
 #panel {
     top: 0;
     height: 60px;
@@ -65,6 +57,7 @@ body {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
+/* логотип посередине панели */
 #title-container {
     height: 60px;
     position: fixed;
@@ -84,7 +77,7 @@ body {
     margin-left: 20px;
     line-height: 1;
 }
-
+/* кнопка поиска на панели */
 #search-button {
     margin-top: 10px;
     position: fixed;
@@ -115,7 +108,7 @@ body {
 #search-button:active {
     filter: brightness(0.8);
 }
-
+/* кнопка выпадающего меню на панели */
 #menu-button {
     margin-top: 10px;
     position: fixed;
@@ -147,23 +140,27 @@ body {
     filter: brightness(0.8);
 }
 
+/* ввод текста поиска */
 #search-input-button {
     background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 40px;
+
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, calc(-50% + 10px));
+    transform: translate(-50%, -50%);
     z-index: 5;
     text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-size: 40px;
     transition: all 0.3s ease-in-out;
-    opacity: 0;
     padding: 10px;
     max-width: 300px;
-    display: none;
+    
+    filter: blur(20px);
+    opacity: 0;
+    pointer-events: none;
 }
 #search-input-button:hover {
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
@@ -173,33 +170,11 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
 }
 #search-input-button.show {
-    display: block;
-    transform: translate(-50%, -50%);
+    filter: blur(0);
     opacity: 1;
+    pointer-events: all;
 }
-
-#content {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-}
-.markdown-block {
-    font-family: 'Patrick Hand', cursive;
-    color: black;
-    margin-top: 30px;
-    padding: 10px;
-    transition: all 0.5s ease-in-out;
-    box-sizing: border-box;
-
-    transform: translateY(10px);
-    opacity: 0;
-}
-.markdown-block.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
+/* анимация поиска элемента */
 .highlight {
     border-radius: 10px;
     animation: lightElement 2s ease-in-out forwards;
@@ -222,6 +197,30 @@ body {
     }
 }
 
+/* блоки текста */
+#content {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.markdown-block {
+    font-family: 'Patrick Hand', cursive;
+    color: black;
+    margin-top: 30px;
+    padding: 10px;
+    transition: all 0.5s ease-in-out;
+    box-sizing: border-box;
+
+    transform: translateY(10px);
+    opacity: 0;
+}
+.markdown-block.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* первый блок затемнения экрана (поиск) */
 #background {
     position: fixed;
     width: 100%;
@@ -237,23 +236,7 @@ body {
     backdrop-filter: blur(20px);
     background-color: rgba(0, 0, 0, 0.2);
 }
-
-#background {
-    position: fixed;
-    width: 100%;
-    height: calc(100% + 100px);
-    backdrop-filter: blur(0);
-    background-color: rgba(0, 0, 0, 0.0);
-    z-index: 4;
-    transition: all 0.3s ease-in-out;
-    visibility: hidden;
-}
-#background.show {
-    visibility: visible;
-    backdrop-filter: blur(20px);
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
+/* второй блок затемнения экрана (меню) */
 #background-2 {
     position: fixed;
     width: 100%;
