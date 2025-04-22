@@ -9,7 +9,6 @@ body {
     backdrop-filter: blur(30px);
     background-color: rgba(255, 255, 255, 0.8);
     border-right: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 200px rgba(0, 0, 0, 0.2);
 
     padding-bottom: 100px;
     padding-top: 10px;
@@ -20,11 +19,12 @@ body {
     padding-right: 20px;
     overflow-y: auto;
 
-    transform: translateX(-300px);
+    transform: translateX(-100%);
     transition: all 0.5s ease-in-out;
 }
 #menu.show {
     transform: translateX(0);
+    box-shadow: 0 0 200px rgba(0, 0, 0, 0.2);
 }
 #menu p {
     margin: 0.5rem 0;
