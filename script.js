@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // инициализация
-  await loadMarkdownContent();
+  loadMarkdownContent();
   populateMenu();
   watchScroll();
   searchHeandler();
