@@ -158,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         const walker = document.createTreeWalker(
             foundElement,
             NodeFilter.SHOW_TEXT,
-            { acceptNode: node => NodeFilter.FILTER_ACCEPT }
         );
 
         let node;
@@ -172,7 +171,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
               const highlightSpan = document.createElement('span');
               highlightSpan.className = 'highlight';
-              highlightSpan.style.backgroundColor = 'yellow';
               range.surroundContents(highlightSpan);
               highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -244,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // инициализация
-  loadMarkdownContent();
+  await loadMarkdownContent();
   populateMenu();
   watchScroll();
   searchHeandler();
